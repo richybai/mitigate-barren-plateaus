@@ -34,9 +34,9 @@ def baseHEA(num_qubits=4, layers=4):
     ansatz = Circuit()
     for l in range(layers):
         for i in range(num_qubits):
-            ansatz += RZ(f'{l}{i}{0}').on(i)
-            ansatz += RX(f'{l}{i}{1}').on(i)
-            ansatz += RZ(f'{l}{i}{2}').on(i)
+            ansatz += RZ(f'{l}{0}').on(i)
+            ansatz += RX(f'{l}{1}').on(i)
+            ansatz += RZ(f'{l}{2}').on(i)
         for i in range(num_qubits-1):
             ansatz += Z(i+1, i)
         ansatz += BarrierGate(False)
@@ -81,8 +81,8 @@ if __name__ == "__main__":
     params_pool = []
     for k in range(100):
     # 不同的random方式
-        # x0 = np.random.random([len(ansatz.params_name)])*np.pi # [0, 1]
-        x0 = np.random.randn(len(ansatz.params_name))*np.pi  # standard normal  
+        x0 = np.random.random([len(ansatz.params_name)])*np.pi # [0, 1]
+        # x0 = np.random.randn(len(ansatz.params_name))*np.pi  # standard normal  
     
         res = minimize(func, x0, args=(grad_ops, target, False), method='BFGS', jac=True, tol=1e-6)
         params_pool.append(res.x.real)
