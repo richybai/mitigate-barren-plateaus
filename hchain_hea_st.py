@@ -77,13 +77,13 @@ if __name__ == "__main__":
 
     params_pool = []
     for k in range(100):
-        x0 = np.random.randn(len(ansatz.params_name))*np.pi
+        x0 = np.random.random([len(ansatz.params_name)])
         res = minimize(func, x0, args=(grad_ops, target, False), method='BFGS', jac=True, tol=1e-6)
         params_pool.append(res.x.real)
         print(f"{k+1} is finished", res.success, res.nit)
     np.save("pool2.npy", params_pool)
 
-    params_pool = np.load("pool2_normal.npy", allow_pickle=True)
+    params_pool = np.load("pool2.npy", allow_pickle=True)
     
     # 计算统计数据部分，计算var和 norm G
     RR_var_list = []
@@ -108,7 +108,7 @@ if __name__ == "__main__":
 
         # 随机初始化参数 采样500次
         for k in range(500):
-            x = np.random.random(len(cir.params_name))
+            x = np.random.random([len(cir.params_name)])
             f, g = grad_ops(x)
             g = g.squeeze() # 梯度
             # 把 partial 0 取出来
@@ -133,7 +133,7 @@ if __name__ == "__main__":
             params = params_pool[idx]
             for i, j in enumerate(ansatz.params_name):
                 pr[j] = params[0, i]
-                j = str(int(j) + 400)
+                j = str(int(j) + 40)
                 pr[j] = params[1, i]
             x = np.array(list(pr.values()))
             
