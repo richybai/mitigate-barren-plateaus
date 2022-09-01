@@ -19,9 +19,9 @@ def baseHEA(num_qubits=4, layers=4):
     ansatz = Circuit()
     for l in range(layers):
         for i in range(num_qubits):
-            ansatz += RZ(f'{l}{i}{0}').on(i)
-            ansatz += RX(f'{l}{i}{1}').on(i)
-            ansatz += RZ(f'{l}{i}{2}').on(i)
+            ansatz += RZ(f'{l}{0}').on(i)
+            ansatz += RX(f'{l}{1}').on(i)
+            ansatz += RZ(f'{l}{2}').on(i)
         for i in range(num_qubits-1):
             ansatz += Z(i+1, i)
         ansatz += BarrierGate(False)
