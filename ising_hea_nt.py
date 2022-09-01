@@ -81,11 +81,7 @@ if __name__ == "__main__":
     params_pool = []
     for k in range(100):
     # 不同的random方式
-<<<<<<< HEAD
-        x0 = np.random.random([len(ansatz.params_name)])*np.pi # [0, 1]
-=======
         x0 = np.random.random([len(ansatz.params_name)]) # [0, 1]
->>>>>>> dee31bf118e87ce59bb417e429741a9de80bd515
         # x0 = np.random.randn(len(ansatz.params_name))*np.pi  # standard normal  
     
         res = minimize(func, x0, args=(grad_ops, target, False), method='BFGS', jac=True, tol=1e-6)
