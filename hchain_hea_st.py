@@ -87,9 +87,13 @@ if __name__ == "__main__":
     # 计算统计数据部分，计算var和 norm G
     RR_var_list = []
     TT_var_list = []
+    RT_var_list = []
+    TR_var_list = []
     RR_avg_norm_list = []
     TT_avg_norm_list = []
-    
+    RT_avg_norm_list = []
+    TR_avg_norm_list = []
+
     num_Hs = [2, 3, 4, 5]
     for num_H in num_Hs:
         partial_0_list = []
