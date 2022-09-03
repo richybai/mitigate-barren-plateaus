@@ -136,8 +136,8 @@ if __name__ == "__main__":
             params = params_pool[idx]
             for i, j in enumerate(ansatz.params_name):
                 pr[j] = params[0, i]
-                # j = str(int(j) + 400)
-                # pr[j] = params[0, i]
+                j = str(int(j) + 400)
+                pr[j] = params[0, i]
             x = np.array(list(pr.values()))
             
             f, g = grad_ops(x)
