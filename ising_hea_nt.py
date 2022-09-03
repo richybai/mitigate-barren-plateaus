@@ -1,7 +1,6 @@
-from cProfile import label
 from mindquantum import Circuit, RZ, RX, Z, BarrierGate, X, H
-from mindquantum import Hamiltonian, QubitOperator, HardwareEfficientAnsatz
-from mindquantum import Simulator, MQAnsatzOnlyLayer, add_prefix, apply
+from mindquantum import Hamiltonian, QubitOperator
+from mindquantum import Simulator, add_prefix, apply
 from scipy.optimize import minimize
 from mindspore import Tensor, nn
 import matplotlib.pyplot as plt
@@ -27,7 +26,7 @@ def IsingHam(J, h, num_qubits=4):
             ham += QubitOperator(f'Z{i} Z{i+1}', -J)
     mat = ham.matrix(num_qubits).todense()
     
-    return Hamiltonian(ham), min(np.linalg.eigvals(mat))
+    return Hamiltonian(ham), min(np.linalg.eigvals(mat).real)
 
 
 def baseHEA(num_qubits=4, layers=4):
@@ -79,16 +78,14 @@ if __name__ == "__main__":
     grad_ops = sim.get_expectation_with_grad(hams, ansatz)
 
     params_pool = []
-    for k in range(100):
-    # 不同的random方式
-        # x0 = np.random.random([len(ansatz.params_name)])*np.pi # [0, 1]
-        x0 = np.random.randn(len(ansatz.params_name))*np.pi  # standard normal  
+    # for k in range(100):
+    #     x0 = np.random.random([len(ansatz.params_name)])*np.pi # [0, 1] 改到pi
     
-        res = minimize(func, x0, args=(grad_ops, target, False), method='BFGS', jac=True, tol=1e-6)
-        params_pool.append(res.x.real)
-        print(f"base task {k+1} is finished", res.success, res.nit)
+    #     res = minimize(func, x0, args=(grad_ops, target, False), method='BFGS', jac=True, tol=1e-6)
+    #     params_pool.append(res.x.real)
+    #     print(f"base task {k+1} is finished", res.success, res.nit)
 
-    np.save("pool1.npy", params_pool)
+    # np.save("pool1.npy", params_pool)
 
 
     params_pool = np.load("pool1.npy", allow_pickle=True)
@@ -109,7 +106,7 @@ if __name__ == "__main__":
 
         # 随机初始化参数 采样500次
         for k in range(500):
-            x = np.random.random(len(cir.params_name))
+            x = np.random.random(len(cir.params_name))*np.pi # 原来是随机初始化的[0, 1], 改到pi就可以了 
             f, g = grad_ops(x)
             g = g.squeeze() # 梯度
             # 把 partial 0 取出来
