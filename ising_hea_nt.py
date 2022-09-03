@@ -6,7 +6,7 @@ from mindspore import Tensor, nn
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OMP_NUM_THREADS"] = "4"
 
 import mindspore as ms
 ms.context.set_context(mode=ms.context.PYNATIVE_MODE, device_target="CPU")
@@ -78,14 +78,14 @@ if __name__ == "__main__":
     grad_ops = sim.get_expectation_with_grad(hams, ansatz)
 
     params_pool = []
-    # for k in range(100):
-    #     x0 = np.random.random([len(ansatz.params_name)])*np.pi # [0, 1] 改到pi
+    for k in range(100):
+        x0 = np.random.random([len(ansatz.params_name)])*np.pi # [0, 1] 改到pi
     
-    #     res = minimize(func, x0, args=(grad_ops, target, False), method='BFGS', jac=True, tol=1e-6)
-    #     params_pool.append(res.x.real)
-    #     print(f"base task {k+1} is finished", res.success, res.nit)
+        res = minimize(func, x0, args=(grad_ops, target, False), method='BFGS', jac=True, tol=1e-6)
+        params_pool.append(res.x.real)
+        print(f"base task {k+1} is finished", res.success, res.nit)
 
-    # np.save("pool1.npy", params_pool)
+    np.save("pool1.npy", params_pool)
 
 
     params_pool = np.load("pool1.npy", allow_pickle=True)

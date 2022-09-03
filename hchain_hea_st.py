@@ -2,18 +2,17 @@ from openfermion.chem import MolecularData
 from openfermionpyscf import run_pyscf
 from mindquantum.algorithm.nisq import generate_uccsd
 from mindquantum import Circuit, RZ, RX, Z, BarrierGate, X, H
-from mindquantum import Hamiltonian, QubitOperator, HardwareEfficientAnsatz
-from mindquantum import Simulator, MQAnsatzOnlyLayer, add_prefix, apply
+from mindquantum import Hamiltonian
+from mindquantum import Simulator, add_prefix, apply
 from scipy.optimize import minimize
 from mindspore import Tensor, nn
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OMP_NUM_THREADS"] = "4"
 
 import mindspore as ms
 ms.context.set_context(mode=ms.context.PYNATIVE_MODE, device_target="CPU")
-ms.set_seed(2022)
 
 def baseHEA(num_qubits=4, layers=4):
     ansatz = Circuit()
@@ -68,7 +67,7 @@ if __name__ == "__main__":
 
     ansatz = Circuit()
     # 加了 h 门可以减少优化的步骤
-    ansatz.un(H, list(range(num_qubits)))
+    # ansatz.un(H, list(range(num_qubits)))
     ansatz += baseHEA(num_qubits, base_layers)
     ansatz.as_ansatz()
 
@@ -76,12 +75,12 @@ if __name__ == "__main__":
     grad_ops = sim.get_expectation_with_grad(hams, ansatz)
 
     params_pool = []
-    for k in range(100):
-        x0 = np.random.random(len(ansatz.params_name))*np.pi
-        res = minimize(func, x0, args=(grad_ops, target, False), method='BFGS', jac=True, tol=1e-6)
-        params_pool.append(res.x.real)
-        print(f"{k+1} is finished", res.success, res.nit)
-    np.save("pool2.npy", params_pool)
+    # for k in range(100):
+    #     x0 = np.random.random(len(ansatz.params_name)) * np.pi
+    #     res = minimize(func, x0, args=(grad_ops, target, False), method='BFGS', jac=True, tol=1e-6)
+    #     params_pool.append(res.x.real)
+    #     print(f"{k+1} is finished", res.success, res.nit)
+    # np.save("pool2.npy", params_pool)
 
     params_pool = np.load("pool2.npy", allow_pickle=True)
     
@@ -127,14 +126,14 @@ if __name__ == "__main__":
         cir_param_name = cir.params_name
 
         for k in range(500):
-            x = np.random.random([len(cir_param_name)]) * np.pi
+            x = np.random.random([len(cir_param_name)])
             pr = dict(zip(cir_param_name, x))
-            idx = np.random.randint(0, 100, 2)
+            idx = np.random.randint(0, 100, 1) 
             params = params_pool[idx]
             for i, j in enumerate(ansatz.params_name):
                 pr[j] = params[0, i]
                 j = str(int(j) + 400)
-                pr[j] = params[1, i]
+                pr[j] = params[0, i]
             x = np.array(list(pr.values()))
             
             f, g = grad_ops(x)

@@ -1,12 +1,12 @@
 from mindquantum import Circuit, RZ, RX, Z, BarrierGate, X, H, XX, YY, ZZ
-from mindquantum import Hamiltonian, QubitOperator, HardwareEfficientAnsatz
-from mindquantum import Simulator, MQAnsatzOnlyLayer, add_prefix, apply
+from mindquantum import Hamiltonian, QubitOperator
+from mindquantum import Simulator, add_prefix, apply
 from scipy.optimize import minimize
 from mindspore import Tensor, nn
 import matplotlib.pyplot as plt
 import numpy as np
 import os
-os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OMP_NUM_THREADS"] = "4"
 
 import mindspore as ms
 ms.context.set_context(mode=ms.context.PYNATIVE_MODE, device_target="CPU")
